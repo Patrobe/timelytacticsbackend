@@ -1,10 +1,28 @@
-const { ObjectId } = require('mongodb');
+const { parse } = require('url');
+const querystring = require('querystring');
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
 
-    if (url === '/subjectinstance' && method === 'GET') {
-        const schedule = await db.collection('subjectInstances').find().toArray();
+    if (url.startsWith('/subjectinstance') && method === 'GET') {
+        const parsedUrl = parse(url);
+        const queryParams = querystring.parse(parsedUrl.query);
+
+        const { subjectId, year, month } = queryParams;
+
+        const query = {};
+        if (subjectId) {
+            query.subjectId = subjectId;
+        }
+        if (year) {
+            query.year = year;  
+        }
+        if (month) {
+            query.month = month;
+        }
+
+        // Fetch results based on the query object
+        const schedule = await db.collection('subjectInstances').find(query).toArray();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(schedule));
     } else if (url === '/subjectinstance' && method === 'POST') {

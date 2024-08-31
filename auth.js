@@ -9,7 +9,7 @@ const registerUser = async (username, password) => {
 };
 
 const loginUser = async (username, password) => {
-    // ... existing code
+
     if (user && await bcrypt.compare(password, user.password)) {
         const token = jwt.sign({ username }, 'your_jwt_secret');
         return { token }; // Return an object with the token

@@ -12,22 +12,49 @@ module.exports = async (req, res, db) => {
         return;
     }
     if (url === '/users' && method === 'GET') {
-        const users = await db.collection('users').find().toArray();
+        const users = await db.collection('users').find({}, { projection: { password: 0 } }).toArray();
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(users)); 
+        res.end(JSON.stringify(users));
         console.log('GET users was called');
     } else if (url === '/users' && method === 'POST') {
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
         });
+
         req.on('end', async () => {
             const user = JSON.parse(body);
+
+            // Check if the role is valid
+            const validRoles = ['Admin', 'Manager', 'Lecturer'];
+            if (!validRoles.includes(user.role)) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'Invalid role value' }));
+                return;
+            }
+
+            // Check if the username is unique
+            const existingUser = await db.collection('users').findOne({ username: user.username });
+            if (existingUser) {
+                res.writeHead(409, { 'Content-Type': 'application/json' }); // 409 Conflict
+                res.end(JSON.stringify({ message: 'Username already exists' }));
+                return;
+            }
+            const highestUser = await db.collection('users')
+                .find()
+                .sort({ userID: -1 })
+                .limit(1)
+                .toArray();
+
+            const nextUserId = highestUser.length > 0 ? highestUser[0].userID + 1 : 1;
+            user.userID = nextUserId;
+
             await db.collection('users').insertOne(user);
+
             res.writeHead(201, { 'Content-Type': 'application/json' },
-                { 'Access-Control-Allow-Origin': 'http://localhost:5173' });
+                { 'Access-Control-Allow-Origin': '*' });
             res.end(JSON.stringify({ message: 'User created' }));
-        });
+        });       
     } else if (url.startsWith('/users/') && method === 'PUT') {
         const id = url.split('/')[2];
         let body = '';

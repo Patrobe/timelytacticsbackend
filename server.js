@@ -13,7 +13,7 @@ async function connectToDatabase() {
         db = client.db(dbName);
         console.log(`Connected to database: ${dbName}`);
 
-        const collections = ['users', 'lecturers', 'subjects', 'subjectInstances', 'skill'];
+        const collections = ['users', 'subjects', 'subjectInstances', 'skill'];
         for (const collection of collections) {
             const col = await db.listCollections({ name: collection }).toArray();
             if (col.length === 0) {

@@ -2,6 +2,15 @@ const { ObjectId } = require('mongodb');
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+
+    if (method === 'OPTIONS') {
+        res.writeHead(204);
+        res.end();
+        return;
+    }
 
     if (url === '/subjects' && method === 'GET') {
         const subjects = await db.collection('subjects').find().toArray();

@@ -26,7 +26,7 @@ module.exports = async (req, res, db) => {
             const user = JSON.parse(body);
 
             // Check if the role is valid
-            const validRoles = ['Admin', 'Manager', 'Lecturer'];
+            const validRoles = [0,1,2];
             if (!validRoles.includes(user.role)) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: 'Invalid role value' }));

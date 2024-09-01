@@ -21,7 +21,7 @@
     <Content Include="package.json" />
     <Content Include="auth.js" />
     <Content Include="lecturer.js" />
-    <Content Include="schedule.js" />
+    <Content Include="subjectInstance.js" />
     <Content Include="server.js" />
     <Content Include="subject.js" />
     <Content Include="testdb.js" />

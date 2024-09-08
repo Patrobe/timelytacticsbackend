@@ -1,9 +1,11 @@
 const http = require('http');
 const { MongoClient } = require('mongodb');
 const userRoutes = require('./user');
+const loginRoutes = require('./login');
 const subjectRoutes = require('./subject');
 const scheduleRoutes = require('./subjectInstance');
 const skillRoutes = require('./skill');
+const login = require('./login');
 const url = 'mongodb://DBadmin:PG430xc*124@170.64.196.188:27017/';
 const dbName = 'timelytactics';
 
@@ -42,6 +44,8 @@ async function connectToDatabase() {
                     return scheduleRoutes(req, res, db);                
                 } else if (req.url.startsWith('/skill')) {
                     return skillRoutes(req, res, db);
+                } else if (req.url.startsWith('/login')) {
+                    return loginRoutes(req, res, db);
                 } else {
                     res.writeHead(404, { 'Content-Type': 'text/plain' });
                     res.end('Route not found');

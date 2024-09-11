@@ -1,11 +1,13 @@
 const { parse } = require('url');
 const querystring = require('querystring');
+const { ObjectId } = require('mongodb'); 
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
 
     if (method === 'OPTIONS') {
         res.writeHead(204);
@@ -17,20 +19,23 @@ module.exports = async (req, res, db) => {
         const parsedUrl = parse(url);
         const queryParams = querystring.parse(parsedUrl.query);
 
-        const { subjectId, year, month } = queryParams;
+        const { subjectId, year, month, lecturerId } = queryParams; 
 
         const query = {};
         if (subjectId) {
             query.subjectId = subjectId;
         }
         if (year) {
-            query.year = year;  
+            query.year = year;
         }
         if (month) {
             query.month = month;
         }
+        if (lecturerId) {
+            query.lecturersID = lecturerId; 
+        }
 
-        // Fetch results based on the query object
+
         const schedule = await db.collection('subjectInstances').find(query).toArray();
         res.writeHead(200, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify(schedule));

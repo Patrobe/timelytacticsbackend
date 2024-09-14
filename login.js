@@ -22,29 +22,28 @@ module.exports = async (req, res, db) => {
         req.on('end', async () => {
             const { username, password } = JSON.parse(body);
 
-            // Check if the user exists
             const user = await db.collection('users').findOne({ username });
-            if (!user || user.password !== password) { // Simple password check (plaintext)
+            if (!user || user.password !== password) { 
                 res.writeHead(404, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: 'Invalid username or password' }));
                 return;
             }
 
-            // Construct the basic login response
+            
             const loginResponse = {
                 username: user.username,
                 role: user.role,
                 userID: user.userID
             };
 
-            // If the user is a lecturer (role 2), include additional fields
+            
             if (user.role === 2) {
                 loginResponse.lecturerName = user.lecturerName;
                 loginResponse.skillSet = user.skillSet;
                 loginResponse.workLoad = user.workLoad;
             }
 
-            // Send the response back
+            
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify(loginResponse));
         });

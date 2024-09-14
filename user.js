@@ -12,13 +12,13 @@ module.exports = async (req, res, db) => {
         return;
     }
 
-    // Handle GET /users with role filtering
+
     if (url.startsWith('/users') && method === 'GET') {
         const urlObj = new URL(`http://localhost:3000${url}`);
         const roleParam = urlObj.searchParams.get('role');
         let roleFilter = {};
 
-        // If the role parameter is passed and is a valid number, add the filter
+
         if (roleParam && !isNaN(roleParam)) {
             const roleValue = parseInt(roleParam, 10);
             if ([0, 1, 2].includes(roleValue)) {
@@ -35,7 +35,6 @@ module.exports = async (req, res, db) => {
         console.log('GET users with role filtering was called');
     }
 
-    // Handle POST /users
     else if (url === '/users' && method === 'POST') {
         let body = '';
         req.on('data', chunk => {
@@ -45,7 +44,6 @@ module.exports = async (req, res, db) => {
         req.on('end', async () => {
             const user = JSON.parse(body);
 
-            // Check if the role is valid
             const validRoles = [0, 1, 2];
             if (!validRoles.includes(user.role)) {
                 res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -53,7 +51,6 @@ module.exports = async (req, res, db) => {
                 return;
             }
 
-            // Check if the username is unique
             const existingUser = await db.collection('users').findOne({ username: user.username });
             if (existingUser) {
                 res.writeHead(409, { 'Content-Type': 'application/json' });
@@ -61,7 +58,6 @@ module.exports = async (req, res, db) => {
                 return;
             }
 
-            // Assign a unique userID
             const highestUser = await db.collection('users')
                 .find()
                 .sort({ userID: -1 })
@@ -78,7 +74,6 @@ module.exports = async (req, res, db) => {
         });
     }
 
-    // Handle PUT /users/:id
     else if (url.startsWith('/users/') && method === 'PUT') {
         const id = url.split('/')[2];
         let body = '';
@@ -93,7 +88,7 @@ module.exports = async (req, res, db) => {
         });
     }
 
-    // Handle DELETE /users/:id
+  
     else if (url.startsWith('/users/') && method === 'DELETE') {
         const id = url.split('/')[2];
         await db.collection('users').deleteOne({ userID: new ObjectId(id) });

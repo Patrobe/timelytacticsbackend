@@ -23,7 +23,7 @@ async function connectToDatabase() {
                 console.log(`Created collection: ${collection}`);
             }
         }
-        return client; // Return the client for potential closing later
+        return client; 
     } catch (err) {
         console.error('Error connecting to database:', err);
         throw err;

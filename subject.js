@@ -23,6 +23,17 @@ module.exports = async (req, res, db) => {
         });
         req.on('end', async () => {
             const subject = JSON.parse(body);
+
+            
+            const highestSubject = await db.collection('subjects')
+                .find()
+                .sort({ subjectID: -1 })
+                .limit(1)
+                .toArray();
+
+            const nextSubjectId = highestSubject.length > 0 ? highestSubject[0].subjectID + 1 : 1;
+            subject.subjectID = nextSubjectId;
+
             await db.collection('subjects').insertOne(subject);
             res.writeHead(201, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Subject created' }));

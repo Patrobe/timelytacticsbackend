@@ -2,7 +2,8 @@ const { ObjectId } = require('mongodb');
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
-    res.setHeader('Access-Control-Allow-Origin', ['http://localhost:5173', 'http://170.64.196.188:5173'].includes(req.headers.origin) ? req.headers.origin : '');
+    res.setHeader('Access-Control-Allow-Origin', 'http://170.64.196.188:5173');
+    //res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
     res.setHeader('Access-Control-Allow-Credentials', 'true');

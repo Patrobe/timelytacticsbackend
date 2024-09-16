@@ -4,7 +4,9 @@ module.exports = async (req, res, db) => {
     const { method, url } = req;
 res.setHeader('Access-Control-Allow-Origin', ['http://localhost:5173', 'http://170.64.196.188:5173'].includes(req.headers.origin) ? req.headers.origin : '');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+
 
     if (method === 'OPTIONS') {
         res.writeHead(204);
@@ -75,18 +77,21 @@ res.setHeader('Access-Control-Allow-Origin', ['http://localhost:5173', 'http://1
     }
 
     else if (url.startsWith('/users/') && method === 'PUT') {
-        const id = url.split('/')[2];
+        const id = url.split('/')[2];  // Extract userID from the URL
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
         });
         req.on('end', async () => {
             const updatedUser = JSON.parse(body);
-            await db.collection('users').updateOne({ userID: new ObjectId(id) }, { $set: updatedUser });
+            delete updatedUser._id;  // Ensure _id is removed before updating the document
+
+            await db.collection('users').updateOne({ userID: parseInt(id, 10) }, { $set: updatedUser });  // Use userID as a number
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'User updated' }));
         });
     }
+
 
   
     else if (url.startsWith('/users/') && method === 'DELETE') {

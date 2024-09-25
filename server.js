@@ -1,3 +1,4 @@
+require('dotenv').config();
 const http = require('http');
 const { MongoClient } = require('mongodb');
 const userRoutes = require('./user');
@@ -6,7 +7,7 @@ const subjectRoutes = require('./subject');
 const scheduleRoutes = require('./subjectInstance');
 const skillRoutes = require('./skill');
 const login = require('./login');
-const url = 'mongodb://DBadmin:PG430xc*124@170.64.196.188:27017/';
+const url = process.env.MONGODB_URI;
 const dbName = 'timelytactics';
 
 async function connectToDatabase() {

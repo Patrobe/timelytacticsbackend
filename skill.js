@@ -1,8 +1,10 @@
+require('dotenv').config();
 const { ObjectId } = require('mongodb');
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
-    res.setHeader('Access-Control-Allow-Origin', 'http://170.64.196.188:5173');
+    const allowedOrigin = process.env.ALLOWED_ORIGIN;
+    res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
 

@@ -80,16 +80,16 @@ module.exports = async (req, res, db) => {
     }
 
     else if (url.startsWith('/users/') && method === 'PUT') {
-        const id = url.split('/')[2];  // Extract userID from the URL
+        const id = url.split('/')[2];  
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
         });
         req.on('end', async () => {
             const updatedUser = JSON.parse(body);
-            delete updatedUser._id;  // Ensure _id is removed before updating the document
+            delete updatedUser._id;  
 
-            await db.collection('users').updateOne({ userID: parseInt(id, 10) }, { $set: updatedUser });  // Use userID as a number
+            await db.collection('users').updateOne({ userID: parseInt(id, 10) }, { $set: updatedUser });  
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'User updated' }));
         });

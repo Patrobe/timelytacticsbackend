@@ -6,6 +6,7 @@ const loginRoutes = require('./login');
 const subjectRoutes = require('./subject');
 const scheduleRoutes = require('./subjectInstance');
 const skillRoutes = require('./skill');
+const departmentRoutes = require('./department');
 const login = require('./login');
 const url = process.env.MONGODB_URI;
 const dbName = 'timelytactics';
@@ -16,7 +17,7 @@ async function connectToDatabase() {
         db = client.db(dbName);
         console.log(`Connected to database: ${dbName}`);
 
-        const collections = ['users', 'subjects', 'subjectInstances', 'skill'];
+        const collections = ['users', 'subjects', 'subjectInstances', 'skill', 'department'];
         for (const collection of collections) {
             const col = await db.listCollections({ name: collection }).toArray();
             if (col.length === 0) {
@@ -47,6 +48,8 @@ async function connectToDatabase() {
                     return skillRoutes(req, res, db);
                 } else if (req.url.startsWith('/login')) {
                     return loginRoutes(req, res, db);
+                } else if (req.url.startsWith('/department')) {
+                    return departmentRoutes(req, res, db);
                 } else {
                     res.writeHead(404, { 'Content-Type': 'text/plain' });
                     res.end('Route not found');

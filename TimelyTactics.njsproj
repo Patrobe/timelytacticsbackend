@@ -18,12 +18,12 @@
   <ItemGroup>
     <Content Include=".env" />
     <Content Include="config.js" />
+    <Content Include="department.js" />
     <Content Include="login.js" />
     <Content Include="skill.js" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
     <Content Include="auth.js" />
-    <Content Include="lecturer.js" />
     <Content Include="subjectInstance.js" />
     <Content Include="server.js" />
     <Content Include="subject.js" />

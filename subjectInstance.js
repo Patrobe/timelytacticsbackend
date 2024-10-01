@@ -1,7 +1,7 @@
 require('dotenv').config();
 const { parse } = require('url');
 const querystring = require('querystring');
-const { ObjectId } = require('mongodb'); 
+const { ObjectId } = require('mongodb');
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
@@ -17,15 +17,15 @@ module.exports = async (req, res, db) => {
         return;
     }
 
-    if (url.startsWith('/subjectinstance') && method === 'GET') {
+    if (url.startsWith('/subjectinstances') && method === 'GET') {
         const parsedUrl = parse(url);
         const queryParams = querystring.parse(parsedUrl.query);
 
-        const { subjectId, year, month, lecturerId } = queryParams; 
+        const { subjectId, year, month, lecturerId, supportUserId } = queryParams;
 
         const query = {};
         if (subjectId) {
-            query.subjectId = subjectId;
+            query.subjectID = subjectId;
         }
         if (year) {
             query.year = year;
@@ -34,9 +34,11 @@ module.exports = async (req, res, db) => {
             query.month = month;
         }
         if (lecturerId) {
-            query.lecturersID = lecturerId; 
+            query.lecturersID = lecturerId;
         }
-
+        if (supportUserId) {
+            query.supportLecturers = { $elemMatch: { userID: supportUserId } };
+        }
 
         const schedule = await db.collection('subjectInstances').find(query).toArray();
         res.writeHead(200, { 'Content-Type': 'application/json' });

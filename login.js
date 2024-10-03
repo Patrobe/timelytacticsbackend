@@ -35,7 +35,9 @@ module.exports = async (req, res, db) => {
             const loginResponse = {
                 username: user.username,
                 role: user.role,
-                userID: user.userID
+                userID: user.userID,
+                departmentID: user.departmentID
+
             };
 
             

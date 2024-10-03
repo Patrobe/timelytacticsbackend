@@ -5,6 +5,7 @@ const userRoutes = require('./user');
 const loginRoutes = require('./login');
 const subjectRoutes = require('./subject');
 const scheduleRoutes = require('./subjectInstance');
+const resetPasswordRoutes = require('./resetPassword');
 const skillRoutes = require('./skill');
 const departmentRoutes = require('./department');
 const login = require('./login');
@@ -50,6 +51,8 @@ async function connectToDatabase() {
                     return loginRoutes(req, res, db);
                 } else if (req.url.startsWith('/department')) {
                     return departmentRoutes(req, res, db);
+                } else if (req.url.startsWith('/resetpassword')) {
+                    return resetPasswordRoutes(req, res, db);
                 } else {
                     res.writeHead(404, { 'Content-Type': 'text/plain' });
                     res.end('Route not found');

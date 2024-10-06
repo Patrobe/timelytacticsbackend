@@ -81,19 +81,15 @@ module.exports = async (req, res, db) => {
                 const nextInstanceID = highestInstance.length > 0 ? highestInstance[0].instanceID + 1 : 1;
                 scheduleItem.instanceID = nextInstanceID;
 
-                // Optional: Set default fields if necessary
-                // scheduleItem.active = scheduleItem.active !== undefined ? scheduleItem.active : true;
-
                 await db.collection('subjectInstances').insertOne(scheduleItem);
 
                 // Fetch the created subject instance to return
                 const createdInstance = await db.collection('subjectInstances').findOne(
-                    { instanceID: nextInstanceID },
-                    { projection: { /* Exclude sensitive fields if any */ } }
+                    { instanceID: nextInstanceID }
                 );
 
                 console.log(`POST /subjectinstance - Created subject instance with InstanceID: ${nextInstanceID}`);
-                console.log('Created Instance:', createdInstance); // Debugging
+                console.log('Created Instance:', createdInstance); 
 
                 res.writeHead(201, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(createdInstance));
@@ -105,7 +101,7 @@ module.exports = async (req, res, db) => {
         });
     }
     else if (url.startsWith('/subjectinstance/') && method === 'PUT') {
-        const id = url.split('/')[2];
+        const instanceID = parseInt(url.split('/')[2], 10); 
         let body = '';
         req.on('data', chunk => {
             body += chunk.toString();
@@ -116,21 +112,27 @@ module.exports = async (req, res, db) => {
                 // Prevent changing the InstanceID
                 delete updatedScheduleItem.instanceID;
 
-                await db.collection('subjectInstances').updateOne(
-                    { _id: new ObjectId(id) },
+                const result = await db.collection('subjectInstances').updateOne(
+                    { instanceID: instanceID }, // Use instanceID for identification
                     { $set: updatedScheduleItem }
                 );
 
+                if (result.matchedCount === 0) {
+                    res.writeHead(404, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ error: 'Subject instance not found' }));
+                    return;
+                }
+
                 // Fetch the updated subject instance
-                const userAfterUpdate = await db.collection('subjectInstances').findOne(
-                    { _id: new ObjectId(id) },
+                const updatedInstance = await db.collection('subjectInstances').findOne(
+                    { instanceID: instanceID },
                     { projection: { /* Exclude sensitive fields if any */ } }
                 );
 
-                console.log(`PUT /subjectinstance/${id} - Updated subject instance`, userAfterUpdate);
+                console.log(`PUT /subjectinstance/${instanceID} - Updated subject instance`, updatedInstance);
 
                 res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify(userAfterUpdate));
+                res.end(JSON.stringify(updatedInstance));
             } catch (error) {
                 console.error('Error updating subject instance:', error);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -138,6 +140,7 @@ module.exports = async (req, res, db) => {
             }
         });
     }
+
     else if (url.startsWith('/subjectinstance/') && method === 'DELETE') {
         const id = url.split('/')[2];
         try {

@@ -26,7 +26,7 @@ module.exports = async (req, res, db) => {
 
             const user = await db.collection('users').findOne({ username });
             if (!user || user.password !== password) { 
-                res.writeHead(404, { 'Content-Type': 'application/json' });
+                res.writeHead(401, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify({ message: 'Invalid username or password' }));
                 return;
             }
@@ -47,9 +47,13 @@ module.exports = async (req, res, db) => {
                 loginResponse.workLoad = user.workLoad;
             }
 
-            
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            res.end(JSON.stringify(loginResponse));
+            if (user.active === false) {
+                res.writeHead(401, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'Invalid username or password' }));
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(loginResponse));
+            };
         });
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });

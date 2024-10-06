@@ -1,4 +1,3 @@
-// resetPassword.js
 require('dotenv').config();
 const { parse } = require('url');
 const querystring = require('querystring');

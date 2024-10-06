@@ -1,4 +1,3 @@
-// users.js (Assuming this is your users endpoint file)
 require('dotenv').config();
 const { ObjectId } = require('mongodb');
 const department = require('./department');

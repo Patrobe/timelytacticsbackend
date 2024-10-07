@@ -144,7 +144,7 @@ module.exports = async (req, res, db) => {
     else if (url.startsWith('/subjectinstance/') && method === 'DELETE') {
         const id = url.split('/')[2];
         try {
-            await db.collection('subjectInstances').deleteOne({ _id: new ObjectId(id) });
+            await db.collection('subjectInstances').deleteOne({ instanceID: parseInt(id, 10) });
             res.writeHead(200, { 'Content-Type': 'application/json' });
             res.end(JSON.stringify({ message: 'Schedule item deleted' }));
             console.log(`DELETE /subjectinstance/${id} - Deleted subject instance`);

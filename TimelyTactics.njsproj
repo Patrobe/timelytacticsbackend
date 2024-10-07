@@ -24,7 +24,6 @@
     <Content Include="skill.js" />
     <Content Include="package-lock.json" />
     <Content Include="package.json" />
-    <Content Include="auth.js" />
     <Content Include="subjectInstance.js" />
     <Content Include="server.js" />
     <Content Include="subject.js" />

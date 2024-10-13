@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { ObjectId } = require('mongodb');
+const bcrypt = require('bcrypt'); 
 
 module.exports = async (req, res, db) => {
     const { method, url } = req;
@@ -22,41 +23,60 @@ module.exports = async (req, res, db) => {
         });
 
         req.on('end', async () => {
-            const { username, password } = JSON.parse(body);
+            try {
+                const { username, password } = JSON.parse(body);
 
-            const user = await db.collection('users').findOne({ username });
-            if (!user || user.password !== password) { 
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: 'Invalid username or password' }));
-                return;
-            }
+                const user = await db.collection('users').findOne({ username });
+                if (!user) {
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'Invalid username or password' }));
+                    return;
+                }
 
-            
-            const loginResponse = {
-                username: user.username,
-                role: user.role,
-                userID: user.userID,
-                departmentID: user.departmentID
+                const match = await bcrypt.compare(password, user.password);
+                if (!match) {
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'Invalid username or password' }));
+                    return;
+                }
 
-            };
+                // Check if the user is active
+                if (user.active === false) {
+                    res.writeHead(401, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ message: 'Invalid username or password' }));
+                    return;
+                }
 
-            
-            if (user.role === 2) {
-                loginResponse.lecturerName = user.lecturerName;
-                loginResponse.skillSet = user.skillSet;
-                loginResponse.workLoad = user.workLoad;
-            }
+                // Prepare the response object
+                const loginResponse = {
+                    user: {
+                        username: user.username,
+                        role: user.role,
+                        userID: user.userID,
+                        departmentID: user.departmentID,
+                        active: user.active
+                    }
+                };
 
-            if (user.active === false) {
-                res.writeHead(401, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({ message: 'Invalid username or password' }));
-            } else {
+                // Add additional fields if the user is a Lecturer
+                if (user.role === 2) {
+                    loginResponse.user.lecturerName = user.lecturerName;
+                    loginResponse.user.skillSet = user.skillSet;
+                    loginResponse.user.workLoad = user.workLoad;
+                }
+
+                // Respond with user details on successful login
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 res.end(JSON.stringify(loginResponse));
-            };
+            } catch (err) {
+                console.error('Error during login:', err);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ message: 'An unexpected error occurred' }));
+            }
         });
     } else {
         res.writeHead(404, { 'Content-Type': 'text/plain' });
         res.end('Route not found');
     }
+
 };

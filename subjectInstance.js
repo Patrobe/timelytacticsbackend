@@ -109,12 +109,12 @@ module.exports = async (req, res, db) => {
         req.on('end', async () => {
             try {
                 const updatedScheduleItem = JSON.parse(body);
-                // Prevent changing the InstanceID
-                delete updatedScheduleItem.instanceID;
+                const { _id, ...updatedScheduleItemWithoutId } = updatedScheduleItem;
+                
 
                 const result = await db.collection('subjectInstances').updateOne(
                     { instanceID: instanceID }, // Use instanceID for identification
-                    { $set: updatedScheduleItem }
+                    { $set: updatedScheduleItemWithoutId }
                 );
 
                 if (result.matchedCount === 0) {

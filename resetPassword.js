@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { parse } = require('url');
+const bcrypt = require('bcrypt');
 const querystring = require('querystring');
 const { ObjectId } = require('mongodb');
 
@@ -66,9 +67,13 @@ module.exports = async (req, res, db) => {
                     return;
                 }
 
+                // Hash the password
+                const saltRounds = 10;
+                const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+
                 const updateResult = await db.collection('users').updateOne(
                     { userID: userID },
-                    { $set: { password: newPassword } } 
+                    { $set: { password: hashedPassword } } 
                 );
 
                 

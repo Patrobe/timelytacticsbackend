@@ -159,10 +159,39 @@ module.exports = async (req, res, db) => {
                 const updatedUser = JSON.parse(body);
                 delete updatedUser._id;
 
-                // If password is being updated, hash it
+                // If password is being updated
                 if (updatedUser.password) {
+                    // Password validation
+                    const validatePassword = (password) => {
+                        const minLength = 8;
+                        const hasMinLength = password.length >= minLength;
+                        const hasUpperCase = /[A-Z]/.test(password);
+                        const hasNumber = /[0-9]/.test(password);
+                        const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+                        return hasMinLength && hasUpperCase && hasNumber && hasSpecialChar;
+                    };
+
+                    if (!validatePassword(updatedUser.password)) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({
+                            message: 'Password must be at least 8 characters long, contain a capital letter, a number, and a special character.'
+                        }));
+                        return;
+                    }
+
+                    // Hash the password
                     const saltRounds = 10;
                     updatedUser.password = await bcrypt.hash(updatedUser.password, saltRounds);
+                }
+
+                // Validate role if it's being updated
+                if (updatedUser.role !== undefined) {
+                    const validRoles = [0, 1, 2];
+                    if (!validRoles.includes(updatedUser.role)) {
+                        res.writeHead(400, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({ message: 'Invalid role value' }));
+                        return;
+                    }
                 }
 
                 // Update the user in the database

@@ -1,3 +1,18 @@
+// .-----------------------------------------------------------------------------------------------------------------------------------------------------------------.
+// | _________   ___   _____ ______    _______    ___            ___    ___              _________   ________   ________  _________   ___   ________   ________      |
+// ||\___   ___\|\  \ |\   _ \  _   \ |\  ___ \  |\  \          |\  \  /  /|            |\___   ___\|\   __  \ |\   ____\|\___   ___\|\  \ |\   ____\ |\   ____\     |
+// |\|___ \  \_|\ \  \\ \  \\\__\ \  \\ \   __/| \ \  \         \ \  \/  / /            \|___ \  \_|\ \  \|\  \\ \  \___|\|___ \  \_|\ \  \\ \  \___| \ \  \___|_    |
+// |     \ \  \  \ \  \\ \  \\|__| \  \\ \  \_|/__\ \  \         \ \    / /                  \ \  \  \ \   __  \\ \  \        \ \  \  \ \  \\ \  \     \ \_____  \   |
+// |      \ \  \  \ \  \\ \  \    \ \  \\ \  \_|\ \\ \  \____     \/  /  /                    \ \  \  \ \  \ \  \\ \  \____    \ \  \  \ \  \\ \  \____ \|____|\  \  |
+// |       \ \__\  \ \__\\ \__\    \ \__\\ \_______\\ \_______\ __/  / /                       \ \__\  \ \__\ \__\\ \_______\   \ \__\  \ \__\\ \_______\ ____\_\  \ |
+// |        \|__|   \|__| \|__|     \|__| \|_______| \|_______||\___/ /                         \|__|   \|__|\|__| \|_______|    \|__|   \|__| \|_______||\_________\|
+// |                                                           \|___|/                                                                                   \|_________||
+// |                                                                                                                                                                 |
+// |  A student project web app by Cameron Egglestone, Jason Walstab, Patrick Hickey and Shane Larsen for Latrobe University                                         |
+// '-----------------------------------------------------------------------------------------------------------------------------------------------------------------'
+// 16/08/2024 created user.js endpoint to provide the users details when required.
+// 10/10/2024 added bcrypt encryption
+
 require('dotenv').config();
 const { ObjectId } = require('mongodb');
 const bcrypt = require('bcrypt'); // Added bcrypt import
@@ -127,13 +142,11 @@ module.exports = async (req, res, db) => {
                     lecturerName: user.lecturerName || '',
                     workLoad: user.workLoad || 0,
                     skillSet: user.skillSet || [],
-                    ...rest, // Include other fields if any
+                    ...rest, 
                 };
 
-                // Insert the new user into the database
                 await db.collection('users').insertOne(newUser);
 
-                // Fetch the created user without the password
                 const createdUser = await db.collection('users').findOne(
                     { userID: nextUserId },
                     { projection: { password: 0 } }

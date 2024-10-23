@@ -1,3 +1,16 @@
+// .-----------------------------------------------------------------------------------------------------------------------------------------------------------------.
+// | _________   ___   _____ ______    _______    ___            ___    ___              _________   ________   ________  _________   ___   ________   ________      |
+// ||\___   ___\|\  \ |\   _ \  _   \ |\  ___ \  |\  \          |\  \  /  /|            |\___   ___\|\   __  \ |\   ____\|\___   ___\|\  \ |\   ____\ |\   ____\     |
+// |\|___ \  \_|\ \  \\ \  \\\__\ \  \\ \   __/| \ \  \         \ \  \/  / /            \|___ \  \_|\ \  \|\  \\ \  \___|\|___ \  \_|\ \  \\ \  \___| \ \  \___|_    |
+// |     \ \  \  \ \  \\ \  \\|__| \  \\ \  \_|/__\ \  \         \ \    / /                  \ \  \  \ \   __  \\ \  \        \ \  \  \ \  \\ \  \     \ \_____  \   |
+// |      \ \  \  \ \  \\ \  \    \ \  \\ \  \_|\ \\ \  \____     \/  /  /                    \ \  \  \ \  \ \  \\ \  \____    \ \  \  \ \  \\ \  \____ \|____|\  \  |
+// |       \ \__\  \ \__\\ \__\    \ \__\\ \_______\\ \_______\ __/  / /                       \ \__\  \ \__\ \__\\ \_______\   \ \__\  \ \__\\ \_______\ ____\_\  \ |
+// |        \|__|   \|__| \|__|     \|__| \|_______| \|_______||\___/ /                         \|__|   \|__|\|__| \|_______|    \|__|   \|__| \|_______||\_________\|
+// |                                                           \|___|/                                                                                   \|_________||
+// |                                                                                                                                                                 |
+// |  A student project web app by Cameron Egglestone, Jason Walstab, Patrick Hickey and Shane Larsen for Latrobe University                                         |
+// '-----------------------------------------------------------------------------------------------------------------------------------------------------------------'
+// 28/08/24 Created the subjectInstance.js endpoint
 require('dotenv').config();
 const { parse } = require('url');
 const querystring = require('querystring');
@@ -10,6 +23,7 @@ module.exports = async (req, res, db) => {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Authorization, Origin, X-Requested-With, Content-Type, Accept');
     res.setHeader('Access-Control-Allow-Credentials', 'true');
+    // This is to stop CORS errors.
 
     if (method === 'OPTIONS') {
         res.writeHead(204);
@@ -125,8 +139,7 @@ module.exports = async (req, res, db) => {
 
                 // Fetch the updated subject instance
                 const updatedInstance = await db.collection('subjectInstances').findOne(
-                    { instanceID: instanceID },
-                    { projection: { /* Exclude sensitive fields if any */ } }
+                    { instanceID: instanceID },                    
                 );
 
                 console.log(`PUT /subjectinstance/${instanceID} - Updated subject instance`, updatedInstance);

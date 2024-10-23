@@ -1,3 +1,18 @@
+// .-----------------------------------------------------------------------------------------------------------------------------------------------------------------.
+// | _________   ___   _____ ______    _______    ___            ___    ___              _________   ________   ________  _________   ___   ________   ________      |
+// ||\___   ___\|\  \ |\   _ \  _   \ |\  ___ \  |\  \          |\  \  /  /|            |\___   ___\|\   __  \ |\   ____\|\___   ___\|\  \ |\   ____\ |\   ____\     |
+// |\|___ \  \_|\ \  \\ \  \\\__\ \  \\ \   __/| \ \  \         \ \  \/  / /            \|___ \  \_|\ \  \|\  \\ \  \___|\|___ \  \_|\ \  \\ \  \___| \ \  \___|_    |
+// |     \ \  \  \ \  \\ \  \\|__| \  \\ \  \_|/__\ \  \         \ \    / /                  \ \  \  \ \   __  \\ \  \        \ \  \  \ \  \\ \  \     \ \_____  \   |
+// |      \ \  \  \ \  \\ \  \    \ \  \\ \  \_|\ \\ \  \____     \/  /  /                    \ \  \  \ \  \ \  \\ \  \____    \ \  \  \ \  \\ \  \____ \|____|\  \  |
+// |       \ \__\  \ \__\\ \__\    \ \__\\ \_______\\ \_______\ __/  / /                       \ \__\  \ \__\ \__\\ \_______\   \ \__\  \ \__\\ \_______\ ____\_\  \ |
+// |        \|__|   \|__| \|__|     \|__| \|_______| \|_______||\___/ /                         \|__|   \|__|\|__| \|_______|    \|__|   \|__| \|_______||\_________\|
+// |                                                           \|___|/                                                                                   \|_________||
+// |                                                                                                                                                                 |
+// |  A student project web app by Cameron Egglestone, Jason Walstab, Patrick Hickey and Shane Larsen for Latrobe University                                         |
+// '-----------------------------------------------------------------------------------------------------------------------------------------------------------------'
+//  06/10/2024 Created the department.js endpoint - Pat
+
+
 require('dotenv').config();
 const { ObjectId } = require('mongodb');
 
@@ -7,7 +22,7 @@ module.exports = async (req, res, db) => {
     res.setHeader('Access-Control-Allow-Origin', allowedOrigin);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-
+    // This is to stop CORS errors
     if (method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
@@ -33,6 +48,7 @@ module.exports = async (req, res, db) => {
         req.on('end', async () => {
             try {
                 const department = JSON.parse(body);
+                //always grabs to the highest departmentID and adds to it so that it is never duplicated.
                 const highestDepartment = await db.collection('department')
                     .find()
                     .sort({ departmentID: -1 })

@@ -27,7 +27,6 @@
     <Content Include="subjectInstance.js" />
     <Content Include="server.js" />
     <Content Include="subject.js" />
-    <Content Include="testdb.js" />
     <Content Include="user.js" />
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,19 @@
+// .-----------------------------------------------------------------------------------------------------------------------------------------------------------------.
+// | _________   ___   _____ ______    _______    ___            ___    ___              _________   ________   ________  _________   ___   ________   ________      |
+// ||\___   ___\|\  \ |\   _ \  _   \ |\  ___ \  |\  \          |\  \  /  /|            |\___   ___\|\   __  \ |\   ____\|\___   ___\|\  \ |\   ____\ |\   ____\     |
+// |\|___ \  \_|\ \  \\ \  \\\__\ \  \\ \   __/| \ \  \         \ \  \/  / /            \|___ \  \_|\ \  \|\  \\ \  \___|\|___ \  \_|\ \  \\ \  \___| \ \  \___|_    |
+// |     \ \  \  \ \  \\ \  \\|__| \  \\ \  \_|/__\ \  \         \ \    / /                  \ \  \  \ \   __  \\ \  \        \ \  \  \ \  \\ \  \     \ \_____  \   |
+// |      \ \  \  \ \  \\ \  \    \ \  \\ \  \_|\ \\ \  \____     \/  /  /                    \ \  \  \ \  \ \  \\ \  \____    \ \  \  \ \  \\ \  \____ \|____|\  \  |
+// |       \ \__\  \ \__\\ \__\    \ \__\\ \_______\\ \_______\ __/  / /                       \ \__\  \ \__\ \__\\ \_______\   \ \__\  \ \__\\ \_______\ ____\_\  \ |
+// |        \|__|   \|__| \|__|     \|__| \|_______| \|_______||\___/ /                         \|__|   \|__|\|__| \|_______|    \|__|   \|__| \|_______||\_________\|
+// |                                                           \|___|/                                                                                   \|_________||
+// |                                                                                                                                                                 |
+// |  A student project web app by Cameron Egglestone, Jason Walstab, Patrick Hickey and Shane Larsen for Latrobe University                                         |
+// '-----------------------------------------------------------------------------------------------------------------------------------------------------------------'
+//
+//  server.js  This is the main server file created on 15/08/2024 -Pat
+//  28/08 Added skill endpoint and subject instances endpoints - Pat
+
 require('dotenv').config();
 const http = require('http');
 const { MongoClient } = require('mongodb');
@@ -33,6 +49,7 @@ async function connectToDatabase() {
     }
 }
 
+//  All of the endpoints available.
 (async () => {
     try {
         const client = await connectToDatabase();
@@ -63,6 +80,8 @@ async function connectToDatabase() {
                 res.end('Internal server error');
             }
         };
+
+        // start the server and console logging
 
         const server = http.createServer(requestHandler);
         server.listen(3000, () => {
